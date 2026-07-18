@@ -41,7 +41,7 @@ export class ProductsService {
     return product;
   }
 
-  async create(createProductDto: CreateProductDto) {
+  async create(createProductDto: CreateProductDto, adminId: number) {
     const existing = await this.productRepository.findOneBy({
       name: createProductDto.name,
     });
@@ -52,7 +52,7 @@ export class ProductsService {
       );
     }
 
-    const newProduct = this.productRepository.create(createProductDto);
+    const newProduct = this.productRepository.create({...createProductDto, createdById: adminId});
     return await this.productRepository.save(newProduct);
   }
 

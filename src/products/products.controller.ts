@@ -7,12 +7,22 @@ import {
   Delete,
   Put,
   Query,
-  ParseIntPipe
+  ParseIntPipe,
+  UseGuards,
+  Req,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
-import { ApiOperation, ApiQuery, ApiParam } from '@nestjs/swagger';
+import {
+  ApiOperation,
+  ApiQuery,
+  ApiParam,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
+import { AuthenticationGuard } from 'src/guards/auth.guard';
+import { RolesGuard } from 'src/guards/role.guard';
+import { Roles } from 'src/decorators/role.decorator';
 
 @Controller('products')
 export class ProductsController {
@@ -39,12 +49,19 @@ export class ProductsController {
   }
 
   @Post()
+  @UseGuards(AuthenticationGuard, RolesGuard)
+  @Roles(['admin'])
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Create a new product' })
-  create(@Body() createProductDto: CreateProductDto) {
-    return this.productsService.create(createProductDto);
+  create(@Body() createProductDto: CreateProductDto, @Req() req:Request) {
+    const adminId = req['user'].sub
+    return this.productsService.create(createProductDto, adminId);
   }
 
   @Put(':product_id')
+  @UseGuards(AuthenticationGuard, RolesGuard)
+  @Roles(['admin'])
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Update an existing product' })
   update(
     @Param('product_id', ParseIntPipe) id: number,
@@ -54,6 +71,9 @@ export class ProductsController {
   }
 
   @Delete(':product_id')
+  @UseGuards(AuthenticationGuard, RolesGuard)
+  @Roles(['admin'])
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Delete a product' })
   remove(@Param('product_id', ParseIntPipe) id: number) {
     return this.productsService.remove(id);

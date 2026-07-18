@@ -1,8 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { User } from 'src/users/entities/user.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -47,6 +50,13 @@ export class Product {
     description: 'Array of image URLs for the product',
   })
   picture!: string[];
+
+  @Column({ nullable: true })
+  createdById!: number;
+
+  @ManyToOne(() => User, (user) => user.products, { onDelete: 'SET NULL' })
+  @JoinColumn({ name: 'admin_id' })
+  createdBy!: User;
 
   @CreateDateColumn({ type: 'timestamp' })
   @ApiProperty({ description: 'The date the product was created' })

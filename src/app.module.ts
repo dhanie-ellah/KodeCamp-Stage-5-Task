@@ -4,6 +4,8 @@ import { AppService } from './app.service';
 import { ProductsModule } from './products/products.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import {ConfigService, ConfigModule} from '@nestjs/config'
+import { UsersModule } from './users/users.module';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -22,7 +24,18 @@ import {ConfigService, ConfigModule} from '@nestjs/config'
         synchronize: true, // Dev only. Use migrations in prod
       }),
     }),
+    JwtModule.registerAsync({
+      global: true,
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => ({
+        secret: config.get<string>('JWT_SECRET'),
+        registerOptions: {
+          expiresIn: config.get<string>('JWT_EXPIRES_IN')
+        }
+      })
+    }),
     ProductsModule,
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],

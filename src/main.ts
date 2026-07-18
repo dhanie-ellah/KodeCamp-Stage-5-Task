@@ -10,6 +10,7 @@ async function bootstrap() {
     .setDescription('API for managing products on the database')
     .setVersion('1.0')
     .addTag('products')
+    .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
