@@ -60,6 +60,8 @@ export class UsersController {
     if (result.userDetails.role != 'admin') {
       throw new UnauthorizedException('Access Denied, Admin portal only!!!');
     }
+
+    return result
   }
 
   // @Get()

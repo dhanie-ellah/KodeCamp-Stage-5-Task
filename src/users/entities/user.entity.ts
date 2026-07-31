@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Order } from 'src/orders/entities/order.entity';
 import { Product } from 'src/products/entities/product.entity';
 import {
   Column,
@@ -36,6 +37,9 @@ export class User {
 
   @OneToMany(() => Product, (product) => product.createdBy)
   products!: Product[];
+
+  @OneToMany(() => Order, (order) => order.user)
+  orders!: Order[];
 
   @CreateDateColumn()
   createdAt!: Date;
