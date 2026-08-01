@@ -56,6 +56,8 @@ export class OrdersService {
       status: OrderStatus.PENDING,
     });
 
+    order.items.forEach(item => item.order = order)
+
     const savedOrder = await this.orderRepo.save(order);
 
     const orderWithUser = await this.orderRepo.findOne({
